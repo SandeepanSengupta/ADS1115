@@ -94,8 +94,15 @@ THE SOFTWARE.
 #define ADS1115_MV_1P024            0.031250
 #define ADS1115_MV_0P512            0.015625
 #define ADS1115_MV_0P256            0.007813
-#define ADS1115_MV_0P256B           0.007813 
+#define ADS1115_MV_0P256B           0.007813
 #define ADS1115_MV_0P256C           0.007813
+
+#define ADS1115_FSR_6P144            6144
+#define ADS1115_FSR_4P096            4096
+#define ADS1115_FSR_2P048            2048
+#define ADS1115_FSR_1P024            1024
+#define ADS1115_FSR_0P512            512
+#define ADS1115_FSR_0P256            256
 
 #define ADS1115_MODE_CONTINUOUS     0x00
 #define ADS1115_MODE_SINGLESHOT     0x01 // default
@@ -159,6 +166,7 @@ class ADS1115 {
         // Utility
         float getMilliVolts(bool triggerAndPoll=true);
         float getMvPerCount();
+        uint16_t getFullScale(uint8_t pga);
 
         // CONFIG register
         bool isConversionReady();

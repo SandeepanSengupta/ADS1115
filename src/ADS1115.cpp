@@ -58,7 +58,7 @@ ADS1115::ADS1115(uint8_t address) {
  * This device is ready to use automatically upon power-up. It defaults to
  * single-shot read mode, P0/N1 mux, 2.048v gain, 128 samples/sec, default
  * comparator with hysterysis, active-low polarity, non-latching comparator,
- * and comparater-disabled operation. 
+ * and comparater-disabled operation.
  */
 void ADS1115::initialize() {
   setMultiplexer(ADS1115_MUX_P0_N1);
@@ -85,7 +85,7 @@ bool ADS1115::testConnection() {
  * @see ADS1115_CFG_OS_BIT
  * @return True if data is available, false otherwise
  */
-bool ADS1115::pollConversion(uint16_t max_retries) {  
+bool ADS1115::pollConversion(uint16_t max_retries) {
   for(uint16_t i = 0; i < max_retries; i++) {
     if (isConversionReady()) return true;
   }
@@ -107,7 +107,7 @@ bool ADS1115::pollConversion(uint16_t max_retries) {
  * effortless, but it has enormous potential to save power by only running the
  * comparison circuitry when needed.
  *
- * @param triggerAndPoll If true (and only in singleshot mode) the conversion trigger 
+ * @param triggerAndPoll If true (and only in singleshot mode) the conversion trigger
  *        will be executed and the conversion results will be polled.
  * @return 16-bit signed differential value
  * @see getConversionP0N1();
@@ -234,67 +234,81 @@ int16_t ADS1115::getConversionP3GND() {
  * Read the current differential and return it multiplied
  * by the constant for the current gain.  mV is returned to
  * increase the precision of the voltage
- * @param triggerAndPoll If true (and only in singleshot mode) the conversion trigger 
+ * @param triggerAndPoll If true (and only in singleshot mode) the conversion trigger
  *        will be executed and the conversion results will be polled.
  */
 float ADS1115::getMilliVolts(bool triggerAndPoll) {
-  switch (pgaMode) { 
+  switch (pgaMode) {
     case ADS1115_PGA_6P144:
       return (getConversion(triggerAndPoll) * ADS1115_MV_6P144);
-      break;    
+      break;
     case ADS1115_PGA_4P096:
       return (getConversion(triggerAndPoll) * ADS1115_MV_4P096);
-      break;             
-    case ADS1115_PGA_2P048:    
+      break;
+    case ADS1115_PGA_2P048:
       return (getConversion(triggerAndPoll) * ADS1115_MV_2P048);
-      break;       
-    case ADS1115_PGA_1P024:     
+      break;
+    case ADS1115_PGA_1P024:
       return (getConversion(triggerAndPoll) * ADS1115_MV_1P024);
-      break;       
-    case ADS1115_PGA_0P512:      
+      break;
+    case ADS1115_PGA_0P512:
       return (getConversion(triggerAndPoll) * ADS1115_MV_0P512);
-      break;       
-    case ADS1115_PGA_0P256:           
-    case ADS1115_PGA_0P256B:          
-    case ADS1115_PGA_0P256C:      
+      break;
+    case ADS1115_PGA_0P256:
+    case ADS1115_PGA_0P256B:
+    case ADS1115_PGA_0P256C:
       return (getConversion(triggerAndPoll) * ADS1115_MV_0P256);
-      break;       
+      break;
   }
 }
 
 /**
  * Return the current multiplier for the PGA setting.
- * 
+ *
  * This may be directly retreived by using getMilliVolts(),
  * but this causes an independent read.  This function could
  * be used to average a number of reads from the getConversion()
- * getConversionx() functions and cut downon the number of 
+ * getConversionx() functions and cut downon the number of
  * floating-point calculations needed.
  *
  */
- 
+
 float ADS1115::getMvPerCount() {
   switch (pgaMode) {
     case ADS1115_PGA_6P144:
       return ADS1115_MV_6P144;
-      break;    
     case ADS1115_PGA_4P096:
       return  ADS1115_MV_4P096;
-      break;             
-    case ADS1115_PGA_2P048:    
+    case ADS1115_PGA_2P048:
       return ADS1115_MV_2P048;
-      break;       
-    case ADS1115_PGA_1P024:     
+    case ADS1115_PGA_1P024:
       return ADS1115_MV_1P024;
-      break;       
-    case ADS1115_PGA_0P512:      
+    case ADS1115_PGA_0P512:
       return ADS1115_MV_0P512;
-      break;       
-    case ADS1115_PGA_0P256:           
-    case ADS1115_PGA_0P256B:          
-    case ADS1115_PGA_0P256C:      
+    case ADS1115_PGA_0P256:
+    case ADS1115_PGA_0P256B:
+    case ADS1115_PGA_0P256C:
       return ADS1115_MV_0P256;
-      break;       
+  }
+}
+
+uint16_t getFullScale(uint8_t pga)
+{
+  switch (pga) {
+    case ADS1115_PGA_6P144:
+      return ADS1115_FSR_6P144;
+    case ADS1115_PGA_4P096:
+      return ADS1115_FSR_4P096;
+    case ADS1115_PGA_2P048:
+      return ADS1115_FSR_2P048;
+    case ADS1115_PGA_1P024:
+      return ADS1115_FSR_1P024;
+    case ADS1115_PGA_0P512:
+      return ADS1115_FSR_0P512;
+    case ADS1115_PGA_0P256:
+    case ADS1115_PGA_0P256B:
+    case ADS1115_PGA_0P256C:
+      return ADS1115_FSR_0P256;
   }
 }
 
@@ -354,7 +368,7 @@ void ADS1115::setMultiplexer(uint8_t mux) {
           setMode(ADS1115_MODE_CONTINUOUS);
         }
     }
-    
+
 }
 /** Get programmable gain amplifier level.
  * @return Current programmable gain amplifier level
@@ -367,7 +381,7 @@ uint8_t ADS1115::getGain() {
     pgaMode=(uint8_t)buffer[0];
     return pgaMode;
 }
-/** Set programmable gain amplifier level.  
+/** Set programmable gain amplifier level.
  * Continous mode may fill the conversion register
  * with data before the gain setting has taken effect.  A stop/start of the conversion
  * is done to reset the values.
@@ -569,7 +583,7 @@ void ADS1115::setHighThreshold(int16_t threshold) {
 }
 
 /** Configures ALERT/RDY pin as a conversion ready pin.
- *  It does this by setting the MSB of the high threshold register to '1' and the MSB 
+ *  It does this by setting the MSB of the high threshold register to '1' and the MSB
  *  of the low threshold register to '0'. COMP_POL and COMP_QUE bits will be set to '0'.
  *  Note: ALERT/RDY pin requires a pull up resistor.
  */
@@ -596,53 +610,53 @@ uint16_t shiftDown(uint16_t extractFrom, int places) {
 uint16_t getValueFromBits(uint16_t extractFrom, int high, int length) {
    int low= high-length +1;
    uint16_t mask = createMask(low ,high);
-   return shiftDown(extractFrom & mask, low); 
+   return shiftDown(extractFrom & mask, low);
 }
 
 /** Show all the config register settings
  */
 void ADS1115::showConfigRegister() {
     I2Cdev::readWord(devAddr, ADS1115_RA_CONFIG, buffer);
-    uint16_t configRegister =buffer[0];    
-    
-    
+    uint16_t configRegister =buffer[0];
+
+
     #ifdef ADS1115_SERIAL_DEBUG
       Serial.print("Register is:");
       Serial.println(configRegister,BIN);
-  
+
       Serial.print("OS:\t");
-      Serial.println(getValueFromBits(configRegister, 
+      Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_OS_BIT,1), BIN);
       Serial.print("MUX:\t");
-      Serial.println(getValueFromBits(configRegister,  
+      Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_MUX_BIT,ADS1115_CFG_MUX_LENGTH), BIN);
-        
+
       Serial.print("PGA:\t");
-      Serial.println(getValueFromBits(configRegister, 
+      Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_PGA_BIT,ADS1115_CFG_PGA_LENGTH), BIN);
-        
+
       Serial.print("MODE:\t");
       Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_MODE_BIT,1), BIN);
-        
+
       Serial.print("DR:\t");
-      Serial.println(getValueFromBits(configRegister, 
+      Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_DR_BIT,ADS1115_CFG_DR_LENGTH), BIN);
-        
+
       Serial.print("CMP_MODE:\t");
-      Serial.println(getValueFromBits(configRegister, 
+      Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_COMP_MODE_BIT,1), BIN);
-        
+
       Serial.print("CMP_POL:\t");
-      Serial.println(getValueFromBits(configRegister, 
+      Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_COMP_POL_BIT,1), BIN);
-        
+
       Serial.print("CMP_LAT:\t");
-      Serial.println(getValueFromBits(configRegister, 
+      Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_COMP_LAT_BIT,1), BIN);
-        
+
       Serial.print("CMP_QUE:\t");
-      Serial.println(getValueFromBits(configRegister, 
+      Serial.println(getValueFromBits(configRegister,
         ADS1115_CFG_COMP_QUE_BIT,ADS1115_CFG_COMP_QUE_LENGTH), BIN);
     #endif
 };
