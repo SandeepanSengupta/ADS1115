@@ -69,7 +69,7 @@ uint16_t ADS1115::readRegister(uint8_t regAddr)
 
     delay(1);
 
-    Wire.requestFrom(devAddr, 2);
+    Wire.requestFrom(devAddr, (uint8_t)2);
     return ((Wire.read() << 8) | Wire.read());
 }
 
@@ -123,7 +123,7 @@ int16_t ADS1115::getConversion(bool triggerAndPoll)
 {
     if (triggerAndPoll && devMode == ADS1115_MODE_SINGLESHOT) {
         triggerConversion();
-        pollConversion(I2CDEV_DEFAULT_READ_TIMEOUT);
+        pollConversion(1000);
     }
 
     return (int16_t)(readRegister(ADS1115_RA_CONVERSION));
@@ -605,7 +605,7 @@ uint8_t ADS1115::getComparatorQueueMode()
 void ADS1115::setComparatorQueueMode(uint8_t mode)
 {
     configValue &= ~ADS1115_CFG_COMP_QUE_MASK;
-    configValue |= (rate << ADS1115_CFG_COMP_QUE_SHIFT) &
+    configValue |= (mode << ADS1115_CFG_COMP_QUE_SHIFT) &
                    ADS1115_CFG_COMP_QUE_MASK;
     writeRegister(ADS1115_RA_CONFIG, configValue);
 }
