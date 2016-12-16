@@ -37,7 +37,7 @@ THE SOFTWARE.
 #ifndef _ADS1115_H_
 #define _ADS1115_H_
 
-#include "I2Cdev.h"
+#include <inttypes.h>
 
 // -----------------------------------------------------------------------------
 // Arduino-style "Serial.print" debug constant (uncomment to enable)

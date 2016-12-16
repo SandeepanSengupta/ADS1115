@@ -33,12 +33,15 @@ THE SOFTWARE.
 ===============================================
 */
 
+#include "Arduino.h"
+#include <Wire.h>
 #include "ADS1115.h"
 
 /** Default constructor, uses default I2C address.
  * @see ADS1115_DEFAULT_ADDRESS
  */
 ADS1115::ADS1115() {
+    Wire.begin();
     devAddr = ADS1115_DEFAULT_ADDRESS;
 }
 
@@ -51,6 +54,7 @@ ADS1115::ADS1115() {
  * @see ADS1115_ADDRESS_ADDR_SDL
  */
 ADS1115::ADS1115(uint8_t address) {
+    Wire.begin();
     devAddr = address;
 }
 
@@ -76,7 +80,9 @@ void ADS1115::initialize() {
  * @return True if connection is valid, false otherwise
  */
 bool ADS1115::testConnection() {
-    return I2Cdev::readWord(devAddr, ADS1115_RA_CONVERSION, buffer) == 1;
+    Wire.beginTransmission(devAddr);
+    int status = Wire.endTransmission();
+    return status == 0;
 }
 
 /** Poll the operational status bit until the conversion is finished
@@ -134,9 +140,22 @@ int16_t ADS1115::getConversion(bool triggerAndPoll) {
       triggerConversion();
       pollConversion(I2CDEV_DEFAULT_READ_TIMEOUT);
     }
-    I2Cdev::readWord(devAddr, ADS1115_RA_CONVERSION, buffer);
+
+    Wire.beginTransmission(devAddr);
+    Wire.write(ADS1115_RA_CONVERSION);
+    Wire.endTransmission();
+
+    delay(1);
+
+    uint8_t available = Wire.requestFrom(devAddr, 2);
+    uint8_t *bufptr = &buffer[0];
+    while (available) {
+        while (!Wire.available());
+	*bufptr++ = Wire.read();
+    }
     return buffer[0];
 }
+
 /** Get AIN0/N1 differential.
  * This changes the MUX setting to AIN0/N1 if necessary, triggers a new
  * measurement (also only if necessary), then gets the differential value
