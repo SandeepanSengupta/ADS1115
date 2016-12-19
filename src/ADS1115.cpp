@@ -294,7 +294,7 @@ float ADS1115::getMvPerCount() {
     }
 }
 
-uint16_t getFullScale(uint8_t pga)
+uint16_t ADS1115::getFullScale(uint8_t pga)
 {
     switch (pga) {
         case ADS1115_PGA_6P144:
