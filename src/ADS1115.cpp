@@ -1,6 +1,12 @@
 #include "Arduino.h"
+
+#ifndef _BV
+#define _BV(x)  (1<<(x))
+#endif
+
 #include <Wire.h>
 #include "ADS1115.h"
+
 
 /** Specific address constructor.
  * @param address I2C address
